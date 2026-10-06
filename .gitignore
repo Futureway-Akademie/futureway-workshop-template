@@ -1,0 +1,24 @@
+# Umgebungsvariablen und lokale Geheimnisse
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Betriebssystemdateien
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor- und temporäre Dateien
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+*.bak
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+

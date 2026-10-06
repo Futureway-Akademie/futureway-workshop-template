@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://futureway.example/schemas/workshop/progress.schema.json",
+  "title": "Futureway Workshop Progress",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "overall",
+    "completedWeight",
+    "totalWeight",
+    "currentPhaseId",
+    "currentTaskId",
+    "completedTasks",
+    "totalTasks",
+    "blockedTasks",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "overall": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "multipleOf": 0.01,
+      "description": "Gewichteter Fortschritt des aktiven Projektumfangs, auf zwei Dezimalstellen gerundet."
+    },
+    "completedWeight": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Summe der Gewichte abgeschlossener Tasks im aktiven Projektumfang."
+    },
+    "totalWeight": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Summe der Task-Gewichte im aktiven Projektumfang; cancelled und superseded sind ausgeschlossen."
+    },
+    "currentPhaseId": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "currentTaskId": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "completedTasks": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Anzahl abgeschlossener Tasks im aktiven Projektumfang."
+    },
+    "totalTasks": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Anzahl aller Tasks im aktiven Projektumfang."
+    },
+    "blockedTasks": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Anzahl blockierter Tasks im aktiven Projektumfang."
+    },
+    "updatedAt": {
+      "anyOf": [
+        { "type": "string", "format": "date-time" },
+        { "type": "null" }
+      ]
+    }
+  }
+}
+

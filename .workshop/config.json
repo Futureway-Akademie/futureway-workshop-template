@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "workshopProtocolVersion": "1.1.0",
+  "language": "de",
+  "guidedDevelopment": true,
+  "allowUnplannedImplementation": false,
+  "requireProjectBrief": true,
+  "requireTaskSelection": true,
+  "dashboard": {
+    "enabled": true,
+    "projectFile": ".workshop/project.json",
+    "roadmapFile": ".workshop/roadmap.json",
+    "progressFile": ".workshop/progress.json",
+    "activityFile": ".workshop/activity.jsonl"
+  }
+}
+

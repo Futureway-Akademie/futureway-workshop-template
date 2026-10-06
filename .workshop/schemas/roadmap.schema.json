@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://futureway.example/schemas/workshop/roadmap.schema.json",
+  "title": "Futureway Workshop Roadmap",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "roadmapVersion", "status", "phases"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "roadmapVersion": { "type": "integer", "minimum": 0 },
+    "status": {
+      "enum": ["not_initialized", "planned", "active", "completed", "archived"]
+    },
+    "phases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/phase" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "timestamp": {
+      "anyOf": [
+        { "type": "string", "format": "date-time" },
+        { "type": "null" }
+      ]
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "description", "order", "weight", "status", "tasks"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "order": { "type": "integer", "minimum": 1 },
+        "weight": { "type": "number", "minimum": 0 },
+        "status": { "enum": ["planned", "ready", "in_progress", "blocked", "completed", "cancelled"] },
+        "tasks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/task" }
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "description",
+        "order",
+        "weight",
+        "status",
+        "dependsOn",
+        "definitionOfDone",
+        "startedAt",
+        "completedAt",
+        "verification"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "order": { "type": "integer", "minimum": 1 },
+        "weight": { "type": "number", "minimum": 0 },
+        "status": { "enum": ["planned", "ready", "in_progress", "blocked", "completed", "cancelled", "superseded"] },
+        "dependsOn": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "definitionOfDone": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+        },
+        "startedAt": { "$ref": "#/$defs/timestamp" },
+        "completedAt": { "$ref": "#/$defs/timestamp" },
+        "verification": { "$ref": "#/$defs/verification" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "completed" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "startedAt": { "type": "string", "format": "date-time" },
+              "completedAt": { "type": "string", "format": "date-time" },
+              "verification": {
+                "type": "object",
+                "properties": { "status": { "const": "passed" } },
+                "required": ["status"]
+              }
+            }
+          },
+          "else": {
+            "properties": { "completedAt": { "type": "null" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "enum": ["in_progress", "blocked"] } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": { "startedAt": { "type": "string", "format": "date-time" } }
+          }
+        }
+      ]
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "summary", "commands", "checkedAt"],
+      "properties": {
+        "status": { "enum": ["not_run", "passed", "failed", "partial"] },
+        "summary": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "commands": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+        },
+        "checkedAt": { "$ref": "#/$defs/timestamp" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "not_run" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "commands": { "type": "array", "maxItems": 0 },
+              "checkedAt": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": { "checkedAt": { "type": "string", "format": "date-time" } }
+          }
+        }
+      ]
+    }
+  }
+}
+
