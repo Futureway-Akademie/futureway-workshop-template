@@ -4,3 +4,5 @@ Nutze Codex zum gezielten Lesen, Bearbeiten und Pr체fen des Repositorys. Halte �
 
 Lies jetzt `.workshop/AGENT_PROTOCOL.md` vollst채ndig. Diese Datei und der zentrale Zustand unter `.workshop/` sind autoritativ. Lege keine Codex-spezifische Roadmap oder Dokumentation an.
 
+Der zentrale `Guided Interaction Contract` in `.workshop/AGENT_PROTOCOL.md` ist verbindlich. Bei dort als EXAKT bezeichneten Fragen darf Codex die Formulierung nicht ausschm체cken, erkl채ren, umformulieren oder mit Beispielen erweitern. Interne Datei-Pr체fung und Analyse vor der sichtbaren Antwort sind zul채ssig.
+

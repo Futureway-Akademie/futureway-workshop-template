@@ -2,6 +2,22 @@
 
 Diese Datei ist die autoritative Prozessquelle für jeden Coding-Agenten. Tool-spezifische Adapter dürfen diesen Ablauf weder duplizieren noch verändern. Maschinenlesbarer Projektzustand wird nur unter `.workshop/` gepflegt.
 
+# Guided Interaction Contract
+
+Bestimmte Workshop-Zustände besitzen nachfolgend exakt definierte Nutzerfragen. Jeder Coding-Agent muss diese Formulierungen unverändert verwenden. Bei diesen Fragen darf er:
+
+- keinen zusätzlichen Einführungstext schreiben
+- keine Beispiele ergänzen
+- keine Bulletpoints ergänzen
+- keine Empfehlungen ergänzen
+- keine technische Analyse ausgeben
+- keine nächste Frage vorwegnehmen
+- die Formulierung weder ausschmücken noch erklären oder umformulieren
+
+Die definierte Frage bildet grundsätzlich die gesamte sichtbare Antwort. Wenn ein Zustand ausdrücklich eine Zusammenfassung, Planung oder Task-Liste vor der Frage verlangt, ist ausschließlich dieser dort genannte Inhalt zusätzlich zulässig; die definierte Frage steht dann unverändert als letzte Zeile. Wo ausdrücklich festgelegt ist, dass die Frage die gesamte sichtbare Antwort bildet, darf davor und danach nichts ausgegeben werden.
+
+Interne Datei-Prüfung und Analyse darf vor der sichtbaren Antwort stattfinden.
+
 ## A. Beim ersten Öffnen
 
 Lies in dieser Reihenfolge:
@@ -11,81 +27,87 @@ Lies in dieser Reihenfolge:
 3. `.workshop/roadmap.json`
 4. `.workshop/progress.json`
 5. `.workshop/CURRENT_STATE.md`
-6. die relevanten Dateien unter `.workshop/specialization/`
+6. alle Dateien unter `.workshop/specialization/`
 7. die für die aktuelle Arbeit relevante Dokumentation
 
-Wenn `project.status` den Wert `not_initialized` hat, darf noch keine Anwendung programmiert oder technisch eingerichtet werden. Frage zuerst sinngemäß genau:
+Wenn `project.status` den Wert `not_initialized` hat und noch keine Projektidee vom Nutzer vorliegt, darf keine Anwendung programmiert, technisch eingerichtet oder selbstständig erdacht werden. Nach der stillen Prüfung der genannten Dateien lautet die gesamte sichtbare Antwort EXAKT:
 
-> Was möchtest du entwickeln?
+Was möchtest du entwickeln?
 
-Der Teilnehmer darf seine Idee frei beschreiben. Bestimme die Idee nicht ungefragt selbst.
+Keine weitere Zeile ist zulässig.
 
 Ist das Projekt bereits initialisiert, melde dem Nutzer nach dem Lesen kurz das erkannte Projekt, die aktuelle Phase, die aktuelle Aufgabe, die zuletzt abgeschlossene Aufgabe und den empfohlenen nächsten Schritt zurück. Halte diese Bestätigung knapp; sie zeigt, dass der zentrale Zustand korrekt übernommen wurde.
 
 ## B. Nach der Projektidee
 
-Analysiere die Idee, aber beginne noch nicht mit der Implementierung. Leite zunächst ab:
+Analysiere die Idee, aber schreibe noch keinen Anwendungscode und ändere noch keine Projektzustandsdatei. Erarbeite einen verständlichen Vorschlag für:
 
-- Projektname
-- Problem oder Idee
-- Zielgruppe
-- Zielplattform
-- Kernfunktionen
-- Nicht-Ziele
+- Projektbrief
 - MVP
-- technische Rahmenbedingungen
-- projektweite Definition of Done
+- technische Struktur
+- Phasen und Tasks
+- Abhängigkeiten
+- projektweite und taskbezogene Definition of Done
+- Verifikation
+- Gewichte
 
-Bereite daraus den Projektbrief und einen Roadmap-Vorschlag mit Phasen, Tasks, Abhängigkeiten, Task-Definition-of-Done, Verifikation und Gewichten vor. Erstelle oder aktualisiere dabei gemeinsam und konsistent:
+Leite dafür insbesondere Projektname, Problem oder Idee, Zielgruppe, Zielplattform, Kernfunktionen, Nicht-Ziele und technische Rahmenbedingungen ab. Zerlege das Vorhaben in sinnvolle Entwicklungsphasen und jede Phase in überschaubare, prüfbare Tasks. Teile pauschale Großaufgaben wie „Backend bauen“ weiter auf.
+
+Zeige dem Nutzer diese Planung verständlich, ohne sie bereits im Repository zu aktivieren. Die letzte Zeile der Antwort lautet EXAKT:
+
+Soll ich diese Projektstruktur so vorbereiten?
+
+Danach warte auf die Antwort des Nutzers. Vor seiner Zustimmung dürfen weder die Projektstruktur gespeichert noch eine Implementierung begonnen werden.
+
+## C. Nach Bestätigung der Projektstruktur
+
+Wenn der Nutzer zustimmt, aktualisiere gemeinsam und konsistent:
 
 - `.workshop/PROJECT_BRIEF.md`
 - `.workshop/project.json`
 - `.workshop/roadmap.json`
 - `.workshop/progress.json`
 - `.workshop/CURRENT_STATE.md`
+- `.workshop/activity.jsonl`
+- relevante Dokumentation
 
-Zerlege das Vorhaben in sinnvolle Entwicklungsphasen und jede Phase in überschaubare Tasks. Ein Task soll normalerweise in einer Arbeitssitzung sinnvoll abschließbar und prüfbar sein. Teile pauschale Großaufgaben wie „Backend bauen“ weiter auf. Dokumentiere Task-Abhängigkeiten in `dependsOn` und konkrete Abnahmekriterien in `definitionOfDone`.
+Setze `project.status` und `roadmap.status` auf `active`, `roadmapVersion` auf mindestens `1` und erfasse die Initialisierung sachlich im Activity Log. Berechne anschließend die Abhängigkeiten und setze jeden startbaren Task auf `ready`.
 
-Zeige dem Nutzer danach eine kurze, verständliche Zusammenfassung und frage genau:
+Zeige die startbaren Tasks kompakt an. Leite diese Auswahl ausschließlich aus `roadmap.json` ab. Zeige `planned` Tasks mit offenen Abhängigkeiten sowie `blocked`, `completed`, `cancelled` und `superseded` Tasks nicht als direkt startbar an. Die letzte Zeile der Antwort lautet EXAKT:
 
-> Soll ich diese Projektstruktur so vorbereiten?
+Womit möchtest du starten?
 
-Vor der Zustimmung darf ein gespeicherter Entwurf höchstens den Status `planned` besitzen und gilt nicht als aktive Roadmap. Erst nach der Zustimmung darfst du `project.status` und `roadmap.status` auf `active` setzen, `roadmapVersion` auf mindestens `1` setzen, die Roadmap als aktuelle Version speichern und die Initialisierung sachlich im Activity Log erfassen. Vor dieser Zustimmung darf keine Projektimplementierung beginnen.
-
-## C. Nach der Planung
-
-Frage:
-
-> Womit möchtest du starten?
-
-Zeige dabei den empfohlenen nächsten Task und weitere Tasks mit Status `ready`. Leite die Auswahl ausschließlich aus `roadmap.json` ab. Zeige `planned` Tasks mit offenen Abhängigkeiten sowie `blocked`, `completed`, `cancelled` und `superseded` Tasks nicht als direkt startbar an.
+Beginne noch keine Implementierung.
 
 ## D. Nach der Task-Auswahl
 
-Implementiere noch nicht automatisch. Bitte den Teilnehmer zunächst um seine Vorstellungen zur ausgewählten Teilaufgabe, zum Beispiel:
+Setze den ausgewählten Task noch nicht auf `completed` und beginne noch nicht mit der Implementierung. Du darfst den ausgewählten Task kurz nennen. Danach lautet die Frage EXAKT:
 
-> Beschreibe jetzt, wie du diese Teilaufgabe umsetzen möchtest. Du kannst Funktionen, Design, Verhalten oder besondere Anforderungen nennen.
+Wie möchtest du diese Teilaufgabe umsetzen?
 
-Erst nach dieser Eingabe darf die Implementierung beginnen.
+Füge keine Beispiele oder vorweggenommenen Vorschläge an, sofern der Nutzer nicht ausdrücklich darum bittet. Warte danach auf seine Umsetzungsbeschreibung.
 
 ## E. Während der Implementierung
 
+Erst nachdem der Nutzer beschrieben hat, wie die ausgewählte Teilaufgabe umgesetzt werden soll, setze den Task bei tatsächlichem Arbeitsbeginn auf `in_progress`, pflege `startedAt` und aktualisiere den zentralen Zustand. Verwende ISO-8601-Zeitstempel in UTC.
+
 Bearbeite nur die ausgewählte Aufgabe. Kleine, notwendige Abhängigkeiten dürfen ergänzt werden. Ziehe keine großen zukünftigen Phasen ungefragt vor. Beachte bestehende Projektregeln und halte wesentliche neue Entscheidungen im Repository fest.
 
-Setze den Task beim tatsächlichen Arbeitsbeginn auf `in_progress`, pflege `startedAt` und aktualisiere den zentralen Zustand. Verwende ISO-8601-Zeitstempel in UTC.
+Prüfe die Definition of Done, berücksichtige das Quality Gate und führe relevante Tests und Checks aus.
 
 Standardmäßig darf im gesamten Projekt höchstens ein Task `in_progress` sein. Eine Ausnahme ist nur zulässig, wenn die Roadmap oder eine Spezialisierungsdatei parallele Arbeit ausdrücklich erlaubt. Starte niemals eigenständig mehrere große Tasks gleichzeitig.
 
-## F. Nach Abschluss
+## F. Nach Abschluss oder Blockierung
 
 Bevor ein Task den Status `completed` erhält:
 
 1. Stelle sicher, dass die zugehörige Implementierung tatsächlich im Repository vorhanden ist.
 2. Prüfe alle Punkte der `definitionOfDone`.
-3. Führe relevante Tests und Checks aus.
-4. Dokumentiere das Ergebnis im `verification`-Objekt des Tasks.
+3. Berücksichtige das Quality Gate.
+4. Führe relevante Tests und Checks aus.
+5. Dokumentiere das Ergebnis im `verification`-Objekt des Tasks.
 
-Melde nicht ausgeführte Tests niemals als erfolgreich. Aktualisiere danach konsistent:
+Melde nicht ausgeführte Tests niemals als erfolgreich. Aktualisiere nach einem erfolgreichen Abschluss konsistent:
 
 - `.workshop/roadmap.json`
 - `.workshop/progress.json`
@@ -95,7 +117,15 @@ Melde nicht ausgeführte Tests niemals als erfolgreich. Aktualisiere danach kons
 
 Setze `completedAt` erst beim belegten Abschluss. Ein Task darf niemals allein durch eine Änderung an `roadmap.json` auf `completed` gesetzt werden. Umgekehrt müssen nach einer erfolgreich umgesetzten und geprüften Aufgabe mindestens `roadmap.json`, `progress.json`, `CURRENT_STATE.md` und `activity.jsonl` sowie bei Bedarf relevante Dokumentation aktualisiert werden.
 
-Berechne Fortschritt aus der Roadmap nach dem Dashboard-Vertrag; schätze ihn nicht. Zeige anschließend die aus der aktualisierten Roadmap abgeleiteten, möglichen nächsten Tasks.
+Berechne den Fortschritt aus der Roadmap nach dem Dashboard-Vertrag; schätze ihn nicht. Fasse danach kurz und sachlich zusammen, was tatsächlich umgesetzt und geprüft wurde, und zeige die aktuell möglichen nächsten Tasks. Die letzte Zeile lautet EXAKT:
+
+Womit möchtest du weitermachen?
+
+Beginne keinen dieser Tasks automatisch.
+
+Kann die Aufgabe nicht abgeschlossen werden, setze sie auf `blocked` und dokumentiere den Grund sachlich. Beginne keine andere größere Aufgabe automatisch. Zeige mögliche `ready` Tasks und beende die Antwort mit der exakt gleichen Frage:
+
+Womit möchtest du weitermachen?
 
 ## G. Agentenwechsel
 
