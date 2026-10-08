@@ -1,3 +1,4 @@
+
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://futureway.example/schemas/workshop/progress.schema.json",
@@ -17,13 +18,14 @@
     "updatedAt"
   ],
   "properties": {
-    "schemaVersion": { "const": 1 },
+    "schemaVersion": {
+      "const": 1
+    },
     "overall": {
       "type": "number",
       "minimum": 0,
       "maximum": 100,
-      "multipleOf": 0.01,
-      "description": "Gewichteter Fortschritt des aktiven Projektumfangs, auf zwei Dezimalstellen gerundet."
+      "description": "Gewichteter Fortschritt des aktiven Projektumfangs, auf zwei Dezimalstellen gerundet. Die Rundung erfolgt bei der Berechnung."
     },
     "completedWeight": {
       "type": "number",
@@ -64,10 +66,14 @@
     },
     "updatedAt": {
       "anyOf": [
-        { "type": "string", "format": "date-time" },
-        { "type": "null" }
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
       ]
     }
   }
 }
-
